@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tracelucid Guide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground: #0a0d12;
+    --surface: #12161d;
+    --surface-raised: #171c25;
+    --border: #232935;
+    --border-soft: #1b212b;
+    --text: #e8ecf2;
+    --text-muted: #8b95a5;
+    --text-dim: #5c6577;
+    --accent: #4a9eff;
+    --accent-soft: rgba(74, 158, 255, 0.12);
+    --good: #3ddc84;
+    --warn: #f5b83d;
+    --critical: #ff5c72;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Consolas, monospace;
+    --sans: "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--ground);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--accent); color: #06090d; }
+  a { color: inherit; }
+  code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    padding: 0.1em 0.4em;
+    color: var(--text);
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+  .nav {
+    display: flex; align-items: center; justify-content: space-between; padding: 28px 0;
+  }
+  .nav-mark { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-weight: 600; font-size: 15px; }
+  .nav-mark .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--good); box-shadow: 0 0 8px var(--good); flex-shrink: 0; }
+  .nav-links { display: flex; gap: 28px; font-size: 13.5px; color: var(--text-muted); }
+  .nav-links a { text-decoration: none; }
+  .nav-links a:hover { color: var(--text); }
+
+  .page-head { padding: 20px 0 44px; border-bottom: 1px solid var(--border-soft); }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.14em;
+    color: var(--accent); text-transform: uppercase; margin: 0 0 16px;
+  }
+  h1.title {
+    font-family: var(--mono); font-weight: 700; font-size: clamp(34px, 5vw, 48px);
+    letter-spacing: -0.02em; line-height: 1.05; margin: 0 0 16px; text-wrap: balance;
+  }
+  .lede { font-size: 16px; color: var(--text-muted); max-width: 640px; margin: 0; }
+
+  .layout { display: grid; grid-template-columns: 220px 1fr; gap: 56px; padding: 44px 0 100px; align-items: start; }
+  .toc { position: sticky; top: 28px; display: flex; flex-direction: column; gap: 2px; }
+  .toc-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; margin: 0 0 10px; }
+  .toc a {
+    display: block; font-size: 13px; color: var(--text-muted); text-decoration: none;
+    padding: 6px 0 6px 12px; border-left: 2px solid var(--border-soft);
+  }
+  .toc a:hover { color: var(--text); border-left-color: var(--text-dim); }
+
+  .content section { margin-bottom: 64px; scroll-margin-top: 24px; }
+  .content h2 {
+    font-family: var(--mono); font-size: 24px; font-weight: 600; letter-spacing: -0.01em;
+    margin: 0 0 10px; padding-bottom: 14px; border-bottom: 1px solid var(--border-soft);
+  }
+  .content h3 {
+    font-family: var(--mono); font-size: 15px; font-weight: 600; color: var(--accent);
+    margin: 32px 0 10px; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .content > section > p.intro { color: var(--text-muted); font-size: 14.5px; margin: 14px 0 22px; max-width: 680px; }
+  .content p { font-size: 14px; color: var(--text-muted); margin: 0 0 14px; max-width: 700px; }
+
+  .ftable { width: 100%; border-collapse: collapse; margin: 8px 0 20px; font-size: 13.5px; }
+  .ftable th {
+    text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-dim); font-weight: 500;
+    padding: 0 14px 10px 0; border-bottom: 1px solid var(--border-soft);
+  }
+  .ftable td { padding: 13px 14px 13px 0; border-bottom: 1px solid var(--border-soft); vertical-align: top; color: var(--text-muted); }
+  .ftable td:first-child { color: var(--text); font-weight: 600; white-space: nowrap; font-family: var(--mono); font-size: 12.5px; }
+  .ftable tr:last-child td { border-bottom: none; }
+  .ftable-wide { overflow-x: auto; }
+
+  .callout {
+    background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    border-radius: 8px; padding: 16px 18px; margin: 18px 0; font-size: 13.5px; color: var(--text-muted);
+  }
+  .callout.good { border-left-color: var(--good); }
+  .callout b { color: var(--text); }
+  .callout-label {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); display: block; margin-bottom: 6px;
+  }
+  .callout.good .callout-label { color: var(--good); }
+
+  .bullets { margin: 0 0 14px; padding-left: 20px; font-size: 14px; color: var(--text-muted); }
+  .bullets li { margin-bottom: 8px; max-width: 680px; }
+  .bullets b { color: var(--text); }
+
+  .qref { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13.5px; }
+  .qref th {
+    text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #06111f; background: var(--accent); padding: 10px 14px; font-weight: 600;
+  }
+  .qref th:first-child { border-radius: 8px 0 0 0; }
+  .qref th:last-child { border-radius: 0 8px 0 0; }
+  .qref td { padding: 12px 14px; border-bottom: 1px solid var(--border-soft); color: var(--text-muted); }
+  .qref tr:nth-child(even) td { background: var(--surface); }
+  .qref td:first-child { color: var(--text); font-style: italic; width: 42%; }
+
+  .foot-note {
+    font-family: var(--mono); font-size: 12px; color: var(--text-dim); margin-top: 40px;
+    padding-top: 20px; border-top: 1px solid var(--border-soft);
+  }
+
+  footer {
+    padding: 44px 0 56px; border-top: 1px solid var(--border-soft);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+  }
+  .footer-left { font-family: var(--mono); font-size: 12.5px; color: var(--text-dim); }
+  .footer-links { display: flex; gap: 22px; font-size: 13px; color: var(--text-muted); }
+  .footer-links a { text-decoration: none; }
+  .footer-links a:hover { color: var(--text); }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; gap: 24px; }
+    .toc { position: static; flex-direction: row; flex-wrap: wrap; gap: 10px; }
+    .toc a { border-left: none; border-bottom: 2px solid var(--border-soft); padding: 4px 0; }
+    .ftable-wide { overflow-x: auto; }
+    .wrap { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav">
+    <a href="./" style="text-decoration:none"><div class="nav-mark"><span class="dot"></span>tracelucid</div></a>
+    <div class="nav-links">
+      <a href="./#install">Install</a>
+      <a href="https://github.com/djbrar/tracelucid-releases/releases/latest">Download</a>
+    </div>
+  </nav>
+
+  <div class="page-head">
+    <p class="eyebrow">Guide</p>
+    <h1 class="title">How to read what Tracelucid shows you</h1>
+    <p class="lede">A field-by-field reference for every view, panel, and control in the app — organized in the order you'll actually use it: open a capture, read the dashboard, then drill into whichever view answers your question.</p>
+  </div>
+
+  <div class="layout">
+    <nav class="toc">
+      <p class="toc-label">On this page</p>
+      <a href="#start">1. Getting started</a>
+      <a href="#dashboard">2. The dashboard</a>
+      <a href="#views">3. The detail views</a>
+      <a href="#other">4. Other features</a>
+      <a href="#quickref">5. Quick reference</a>
+      <a href="#bytes">6. Understanding bytes</a>
+    </nav>
+
+    <div class="content">
+
+      <section id="start">
+        <h2>1. Getting started</h2>
+        <p class="intro">Everything in the header bar, before you've opened anything.</p>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Control</th><th>What it does</th><th>When to use it</th></tr>
+          <tr><td>Open capture...</td><td>Opens a native file picker for .pcap/.pcapng/.cap files. Select multiple at once — they're merged into one chronological capture using Wireshark's own <code>mergecap</code>, not re-implemented merging logic.</td><td>Standard offline analysis: you already have a capture file (or several) to review.</td></tr>
+          <tr><td>Live capture...</td><td>Lists your network interfaces; pick one and click Start. The dashboard updates automatically roughly every 1.5 seconds while it runs. "Stop live capture" ends the session — the result becomes a normal, revisitable capture.</td><td>Watching what's happening on the network right now, rather than reviewing a past file.</td></tr>
+          <tr><td>Check engine</td><td>Pings the background analysis engine and confirms it responded, showing its version.</td><td>Troubleshooting only.</td></tr>
+          <tr><td>Appearance</td><td>Theme (Light/Dark/System), accent color, and time format. See 4.3.</td><td>Personal preference, or switching time format to suit the capture (5).</td></tr>
+          <tr><td>Settings</td><td>Optional AI Explanations and Threat Intelligence API keys. Both off until you add your own key. See 4.4.</td><td>Once, when you decide to enable either optional feature.</td></tr>
+        </table>
+        </div>
+        <p>While a file is loading, an import progress bar shows packets processed (and an estimated total, when known), with a Cancel button.</p>
+      </section>
+
+      <section id="dashboard">
+        <h2>2. The dashboard</h2>
+        <p class="intro">Everything below the capture's file name, visible as soon as a capture is loaded. Read top to bottom: Health tells you <i>if</i> there's a problem, Findings tells you <i>what and why</i>, Latency tells you about delay specifically, and the stat tiles give you the raw scale.</p>
+
+        <h3>2.1 Network health</h3>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Field</th><th>What it means</th><th>When to use it</th></tr>
+          <tr><td>Category</td><td>Excellent / Good / Needs Attention / Poor / Critical — color-coded.</td><td>The first glance — tells you in one word whether this capture needs a closer look.</td></tr>
+          <tr><td>Score</td><td>Out of 100, computed transparently from the factors below it — never a black-box number.</td><td>Comparing two captures at a glance, or tracking whether a fix helped.</td></tr>
+          <tr><td>Factors</td><td>Each factor feeding the score: its own severity pill, a short name, and a plain-language description of exactly what was measured.</td><td>Understanding <i>why</i> the score is what it is — every factor is a real, checkable measurement.</td></tr>
+        </table>
+        </div>
+
+        <h3>2.2 Findings</h3>
+        <p>Each finding describes one specific thing the analysis engine detected — always with the evidence to back it up.</p>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Field</th><th>What it means</th><th>When to use it</th></tr>
+          <tr><td>Severity pill</td><td>critical / warning / info, color-coded.</td><td>Triaging quickly when there are many findings.</td></tr>
+          <tr><td>×N badge</td><td>Findings sharing the same category and title collapse into one card with a ×N count. Click the header to expand each occurrence.</td><td>Captures with a repeated pattern — avoids a long scroll of near-identical cards.</td></tr>
+          <tr><td>Description</td><td>A plain-language sentence naming the specific hosts/values involved.</td><td>The fastest way to understand what happened, in words.</td></tr>
+          <tr><td>Technical explanation</td><td>A more detailed, technically precise version of the same finding.</td><td>When you need the precise mechanism, not just the summary.</td></tr>
+          <tr><td>Possible causes</td><td>Plausible explanations — deliberately including benign ones alongside concerning ones.</td><td>Before assuming the worst — most findings have an innocent explanation too.</td></tr>
+          <tr><td>View evidence</td><td>Jumps to the exact packets behind this finding, scrolling the packet table into view automatically. For a ×N card, covers every occurrence at once.</td><td>Verifying a finding against the raw data — nothing is asserted without a pointer to real packets.</td></tr>
+          <tr><td>Explain with AI</td><td>Optional — only if you've added an Anthropic key in Settings. Simple / Detailed / Expert.</td><td>When you want a different level of detail than the fixed text provides.</td></tr>
+        </table>
+        </div>
+
+        <h3>2.3 Latency</h3>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Field</th><th>What it means</th><th>When to use it</th></tr>
+          <tr><td>Metric name</td><td>"TCP handshake (SYN → SYN/ACK)" or "DNS response time."</td><td>Distinguishing slow connection setup from slowness within an already-open connection.</td></tr>
+          <tr><td>avg / median / range</td><td>In milliseconds.</td><td>Median resists one outlier skewing the picture — check both.</td></tr>
+          <tr><td>Sample count</td><td>How many measurements this is based on.</td><td>2 samples deserves less confidence than 800.</td></tr>
+          <tr><td>Hint text</td><td>General background on common causes of that <i>kind</i> of delay — not a diagnosis of this specific capture.</td><td>Context without over-claiming certainty about this specific case.</td></tr>
+        </table>
+        </div>
+
+        <h3>2.4 The stat tiles</h3>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Field</th><th>What it means</th><th>When to use it</th></tr>
+          <tr><td>Duration</td><td>Length of the capture in seconds, first packet to last.</td><td>How much wall-clock time this capture spans.</td></tr>
+          <tr><td>Packets</td><td>Total packet count.</td><td>Overall scale of the capture.</td></tr>
+          <tr><td>Bytes</td><td>Total data volume across the <i>entire</i> capture, all hosts/conversations combined.</td><td>The single "how big" number — for a breakdown of who moved it, see Section 3.</td></tr>
+          <tr><td>Hosts</td><td>Count of distinct IP addresses seen.</td><td>How many machines were involved.</td></tr>
+          <tr><td>Protocols</td><td>Top protocols and packet counts.</td><td>A one-line traffic-mix summary.</td></tr>
+          <tr><td>Flows</td><td>Count of distinct conversations — see 3.2.</td><td>How many separate conversations happened.</td></tr>
+          <tr><td>Security Signals</td><td>Count of findings in the <i>security</i> category (port scans, beaconing, large transfers, suspicious DNS).</td><td>A security-specific temperature check, separate from general findings.</td></tr>
+        </table>
+        </div>
+      </section>
+
+      <section id="views">
+        <h2>3. The detail views</h2>
+        <p class="intro">The toggle buttons below the dashboard — Show timeline / Show flows / Show hosts / Show conversations / Show packet table (expert view). Independent: open any combination. Clicking a row in any of these jumps to that row's packets, scrolling the packet table into view automatically.</p>
+
+        <h3>3.1 Timeline</h3>
+        <p>A chronological log of notable events — connections opening/closing, and findings — in the order they actually happened.</p>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Field</th><th>What it means</th><th>When to use it</th></tr>
+          <tr><td>Time</td><td>When the event happened; format follows Appearance → Time format.</td><td>Establishing exact timing.</td></tr>
+          <tr><td>Event</td><td>A severity-colored category badge (tcp, dns, security...) plus the event's title.</td><td>Scanning for what kind of thing happened, and when.</td></tr>
+          <tr><td>Evidence</td><td>How many packets back this event.</td><td>Jumping to the exact packets behind a specific moment.</td></tr>
+        </table>
+        </div>
+        <div class="callout"><span class="callout-label">When to use this view</span>You care about sequence and timing — "did the retransmission happen before or after the reset?" The only view that interleaves everything in strict chronological order.</div>
+
+        <h3>3.2 Flows</h3>
+        <p>Every distinct network conversation — a "flow" is one unique combination of two endpoints (address+port) and a transport protocol.</p>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Field</th><th>What it means</th><th>When to use it</th></tr>
+          <tr><td>Transport</td><td>TCP, UDP, ICMP, etc. — color-coded.</td><td>Filtering mentally by protocol type.</td></tr>
+          <tr><td>Endpoint A / B</td><td>The two sides, as address:port. A magnifying-glass icon appears if threat-intel is enabled.</td><td>Identifying exactly who talked to whom, on which port.</td></tr>
+          <tr><td>Packets</td><td>Packets in this one conversation.</td><td>Spotting unusually chatty conversations.</td></tr>
+          <tr><td>Bytes</td><td>Total data transferred in this single conversation, both directions.</td><td>Finding the single biggest transfer — sort this column.</td></tr>
+          <tr><td>Handshake</td><td>TCP only: time to establish (SYN → SYN/ACK).</td><td>Diagnosing whether a <i>specific</i> connection was slow to start.</td></tr>
+          <tr><td>Contents</td><td>"Visible" or "Encrypted" (TLS) — a factual state, not a problem by itself.</td><td>Knowing upfront whether deeper inspection is even possible.</td></tr>
+          <tr><td>First/Last seen</td><td>Timestamps bounding this conversation.</td><td>How long this specific conversation lasted.</td></tr>
+          <tr><td>Status</td><td>TCP: state + retransmission/dup-ACK counts. DNS: query/failure counts.</td><td>The fastest per-row health check — red pills flag problems immediately.</td></tr>
+        </table>
+        </div>
+        <div class="callout"><span class="callout-label">When to use this view</span>The most direct answer to "who talked to whom, and how did it go?" Sort by Bytes to find your single largest conversation. Click any row to <b>Follow the stream</b> and read the reassembled conversation.</div>
+
+        <h3>3.3 Hosts</h3>
+        <p>Traffic aggregated per individual IP address — every flow that address was part of, summed together.</p>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Field</th><th>What it means</th><th>When to use it</th></tr>
+          <tr><td>Host</td><td>The IP address; magnifying-glass icon if threat-intel is enabled.</td><td>Identifying every machine that appeared in the capture.</td></tr>
+          <tr><td>Scope</td><td>Internal or External (private/RFC1918 vs. real routable).</td><td>Separating your own machines from anything outside your network.</td></tr>
+          <tr><td>Packets / Bytes</td><td>Totals across every flow this host was part of.</td><td>Finding your biggest talker overall — sort by Bytes.</td></tr>
+          <tr><td>Flows</td><td>Distinct conversations this host was part of.</td><td>Spotting an unusually social host.</td></tr>
+          <tr><td>Peers</td><td>Distinct <i>other</i> addresses this host talked to.</td><td>A high peer count, especially to many external addresses, is worth a look.</td></tr>
+          <tr><td>Transports</td><td>Protocols this host used.</td><td>Understanding what kind of traffic a host generated.</td></tr>
+          <tr><td>First/Last seen</td><td>Bounding timestamps across all activity.</td><td>How long this host was active.</td></tr>
+        </table>
+        </div>
+        <p>The search box filters by address, scope, or transport. Multiple terms: space/comma = OR; write <code>AND</code> to require both. Whole-term aware, so <code>203.0.0.1</code> won't also match <code>203.0.0.10</code>.</p>
+        <div class="callout"><span class="callout-label">When to use this view</span>"Who is the biggest talker in this capture?" Sort by Bytes. Also the fastest way to separate internal from external machines.</div>
+
+        <h3>3.4 Conversations</h3>
+        <p>Traffic aggregated per <i>pair</i> of hosts, regardless of port/protocol — broader than Flows, which splits the same pair into separate rows.</p>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Field</th><th>What it means</th><th>When to use it</th></tr>
+          <tr><td>Host A / B</td><td>The two addresses in this pair.</td><td>Identifying a specific pair of machines.</td></tr>
+          <tr><td>Packets/Bytes/Flows</td><td>Totals across <i>every</i> flow between exactly this pair.</td><td>Total data between two specific machines, across everything they did.</td></tr>
+          <tr><td>Transports</td><td>Every protocol used between this pair.</td><td>Seeing the full relationship between two hosts in one row.</td></tr>
+          <tr><td>First/Last seen</td><td>Bounding timestamps across everything between this pair.</td><td>How long this pair's relationship spanned the capture.</td></tr>
+        </table>
+        </div>
+        <p>Same search syntax as Hosts.</p>
+        <div class="callout"><span class="callout-label">When to use this view</span>"How much total data moved between these two machines, across everything they did?" More direct than Flows, which would split the same pair across several rows.</div>
+
+        <h3>3.5 Packet table (expert view)</h3>
+        <p>The raw, individual-packet view — closest to what a tool like Wireshark shows. Every other view is a summary built from this data.</p>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Field</th><th>What it means</th><th>When to use it</th></tr>
+          <tr><td>#</td><td>Packet number.</td><td>A stable reference for a specific packet.</td></tr>
+          <tr><td>Time</td><td>This packet's timestamp; format follows the Appearance setting.</td><td>Exact timing of one specific packet.</td></tr>
+          <tr><td>Δ Time</td><td>Time since the <i>previous row currently shown</i> — most useful filtered to one flow, revealing gaps/bursts within it.</td><td>Spotting an unusual pause or burst within one flow's sequence.</td></tr>
+          <tr><td>Source / Destination</td><td>The two addresses for this packet.</td><td>Direction of this specific packet.</td></tr>
+          <tr><td>Protocol</td><td>Color-coded badge.</td><td>Visually scanning a mixed-protocol capture.</td></tr>
+          <tr><td>Length</td><td>This packet's size in bytes.</td><td>Spotting unusually large or small individual packets.</td></tr>
+          <tr><td>Info</td><td>Wireshark-style one-line summary.</td><td>Quickest per-packet detail without opening the full decode.</td></tr>
+        </table>
+        </div>
+        <p>The filter box supports the same multi-term syntax. A "Showing X of Y loaded" counter with "Load more" replaces silent truncation. Click any row for its full raw decoded fields in the pane on the right — including a <b>Context</b> section cross-referencing the flow and any finding this exact packet is evidence for.</p>
+        <div class="callout"><span class="callout-label">When to use this view</span>The ground truth. Verify a finding, or get exact byte-level detail no summary view provides.</div>
+      </section>
+
+      <section id="other">
+        <h2>4. Other features</h2>
+
+        <h3>4.1 Export report</h3>
+        <p>The "Export report..." button sits next to the capture's file name, above the dashboard. Opens a checklist — Network health, Findings, Flows, Hosts, Conversations, Timeline — pick any combination, then "Export to PDF..." opens a native save dialog.</p>
+
+        <h3>4.2 Follow stream</h3>
+        <p>Click any row in Flows to reassemble that conversation's payload into a readable, direction-colored exchange — the same mechanism behind Wireshark's "Follow TCP Stream." HTTP-aware mode dechunks <code>Transfer-Encoding: chunked</code> bodies automatically; a Text/Hex toggle handles binary or encrypted content; and clicking any reassembled chunk jumps straight to the exact packet that carried it.</p>
+
+        <h3>4.3 IP reputation lookup</h3>
+        <p>The magnifying-glass icon next to an address (Flows and Hosts) checks that one IP against a provider you choose in Settings (AbuseIPDB or VirusTotal). Opt-in and manual only — only the address you click is ever sent. Shows a risk score out of 100, a summary, organization/country, and provider used.</p>
+
+        <h3>4.4 Appearance</h3>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Field</th><th>What it means</th><th>When to use it</th></tr>
+          <tr><td>Theme</td><td>System (follows OS), Light, or Dark.</td><td>Personal preference or matching a presentation environment.</td></tr>
+          <tr><td>Accent color</td><td>Six presets: Blue, Teal, Purple, Orange, Pink, Green.</td><td>Personal preference.</td></tr>
+          <tr><td>Time format</td><td>Seconds (raw epoch, Wireshark default), Local time, or Relative (elapsed since first packet).</td><td>Local time to correlate with a real-world clock/log file; Relative when only elapsed time matters.</td></tr>
+        </table>
+        </div>
+
+        <h3>4.5 Settings: AI explanations &amp; threat intelligence</h3>
+        <p>Both off by default, both require your own API key — nothing is sent anywhere automatically.</p>
+        <ul class="bullets">
+          <li><b>AI Explanations</b> (Anthropic/Claude): powers "Explain with AI" on findings. Only the specific finding you click is sent — never raw packets.</li>
+          <li><b>Threat Intelligence</b> (AbuseIPDB or VirusTotal): powers the reputation lookups. Only checks the exact address you click.</li>
+        </ul>
+      </section>
+
+      <section id="quickref">
+        <h2>5. Quick reference: where do I look?</h2>
+        <p class="intro">A shortcut for common questions — start here if you're not sure which view has the answer.</p>
+        <div class="ftable-wide">
+        <table class="qref">
+          <tr><th>If you want to know...</th><th>Look here</th></tr>
+          <tr><td>Is anything wrong with this capture at all?</td><td>Network Health category + score (2.1) — your very first glance.</td></tr>
+          <tr><td>What specifically is wrong, and why?</td><td>Findings (2.2) — read the description, then "View evidence."</td></tr>
+          <tr><td>Is this a security or performance concern?</td><td>"Security Signals" tile for a count; findings category "security" vs. general findings.</td></tr>
+          <tr><td>Which single conversation transferred the most data?</td><td>Flows (3.2), sort by Bytes.</td></tr>
+          <tr><td>How much data moved between two specific machines, total?</td><td>Conversations (3.4) — combines every flow between that pair.</td></tr>
+          <tr><td>Which single host sent/received the most data overall?</td><td>Hosts (3.3), sort by Bytes.</td></tr>
+          <tr><td>Was a connection slow to start, or slow throughout?</td><td>Latency panel (2.3); Flows' Handshake column; Δ Time in the packet table (3.5), filtered to one flow.</td></tr>
+          <tr><td>Did DNS work correctly?</td><td>Findings for "DNS query failures detected"; Flows' Status column.</td></tr>
+          <tr><td>What order did things happen in?</td><td>Timeline (3.1) — strictly chronological.</td></tr>
+          <tr><td>Is this specific IP address known to be malicious?</td><td>Reputation lookup in Flows or Hosts (needs a Threat Intelligence key, 4.5).</td></tr>
+          <tr><td>I want to inspect the exact bytes of one packet.</td><td>Packet table, expert view (3.5).</td></tr>
+          <tr><td>I want to share these results with someone else.</td><td>"Export report..." (4.1).</td></tr>
+        </table>
+        </div>
+      </section>
+
+      <section id="bytes">
+        <h2>6. Understanding data volume (bytes)</h2>
+        <p class="intro">Byte counts appear at four different levels of granularity. Each answers a different question — picking the right one matters:</p>
+        <ul class="bullets">
+          <li><b>Bytes stat tile</b> (2.4) — the whole capture, every host and conversation combined. Answers: "how big was this capture overall?"</li>
+          <li><b>Hosts → Bytes</b> (3.3) — everything one specific address sent or received, across every conversation. Answers: "which single machine moved the most data?"</li>
+          <li><b>Conversations → Bytes</b> (3.4) — everything transferred between one specific pair, across every port/protocol together. Answers: "how much data moved between these two machines?"</li>
+          <li><b>Flows → Bytes</b> (3.2) — one single conversation (one pair, one port, one protocol). Answers: "which single conversation was the biggest?" — the finest-grained of the four.</li>
+        </ul>
+        <p>A worked example: if a host downloaded a large file over one HTTPS connection, that transfer's size shows up identically in all four places — as part of the capture's total Bytes, as (most of) that host's total in Hosts, as that pair's total in Conversations, and as that one flow's own Bytes in Flows. If instead the same two machines had five separate connections that each moved some data, Conversations shows their combined total in one row, while Flows shows each of the five separately — useful for telling "one big transfer" apart from "many smaller ones that add up."</p>
+        <div class="callout good"><span class="callout-label">Also worth knowing</span>A "Large outbound transfer to an external host" finding (2.2) fires automatically when one flow's outbound volume crosses a threshold — so an unusually large transfer often shows up as a Finding before you'd even need to go sorting tables by Bytes yourself.</div>
+        <p class="foot-note">Every field on this page was verified directly against the application's source code, not written from memory.</p>
+      </section>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-left">tracelucid guide</div>
+    <div class="footer-links">
+      <a href="./">Home</a>
+      <a href="https://github.com/djbrar/tracelucid-releases/releases/latest">Download</a>
+    </div>
+  </footer>
+</div>
+</body>
+</html>
