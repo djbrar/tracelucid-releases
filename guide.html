@@ -393,7 +393,6 @@
         </ul>
         <p>A worked example: if a host downloaded a large file over one HTTPS connection, that transfer's size shows up identically in all four places — as part of the capture's total Bytes, as (most of) that host's total in Hosts, as that pair's total in Conversations, and as that one flow's own Bytes in Flows. If instead the same two machines had five separate connections that each moved some data, Conversations shows their combined total in one row, while Flows shows each of the five separately — useful for telling "one big transfer" apart from "many smaller ones that add up."</p>
         <div class="callout good"><span class="callout-label">Also worth knowing</span>A "Large outbound transfer to an external host" finding (2.2) fires automatically when one flow's outbound volume crosses a threshold — so an unusually large transfer often shows up as a Finding before you'd even need to go sorting tables by Bytes yourself.</div>
-        <p class="foot-note">Every field on this page was verified directly against the application's source code, not written from memory.</p>
       </section>
 
     </div>
