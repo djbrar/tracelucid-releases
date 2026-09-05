@@ -103,12 +103,14 @@
     border-radius: 8px; padding: 16px 18px; margin: 18px 0; font-size: 13.5px; color: var(--text-muted);
   }
   .callout.good { border-left-color: var(--good); }
+  .callout.warn { border-left-color: var(--warn); }
   .callout b { color: var(--text); }
   .callout-label {
     font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--accent); display: block; margin-bottom: 6px;
   }
   .callout.good .callout-label { color: var(--good); }
+  .callout.warn .callout-label { color: var(--warn); }
 
   .bullets { margin: 0 0 14px; padding-left: 20px; font-size: 14px; color: var(--text-muted); }
   .bullets li { margin-bottom: 8px; max-width: 680px; }
@@ -191,6 +193,7 @@
         </table>
         </div>
         <p>While a file is loading, an import progress bar shows packets processed (and an estimated total, when known), with a Cancel button.</p>
+        <div class="callout warn"><span class="callout-label">Windows: only seeing "Loopback" in Live capture?</span>Your Wi-Fi/Ethernet adapters missing from that list almost always means the Npcap driver service isn't running — not that Tracelucid can't see them. Open Command Prompt <b>as Administrator</b> and run <code>net start npcap</code>, then reopen Live capture. To stop this from recurring, also run <code>sc config npcap start= auto</code> (the space after <code>start=</code> is required). A future release will surface this hint directly in the app.</div>
       </section>
 
       <section id="dashboard">
