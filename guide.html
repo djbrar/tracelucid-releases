@@ -193,7 +193,6 @@
         </table>
         </div>
         <p>While a file is loading, an import progress bar shows packets processed (and an estimated total, when known), with a Cancel button.</p>
-        <div class="callout warn"><span class="callout-label">Windows: only seeing "Loopback" in Live capture?</span>Your Wi-Fi/Ethernet adapters missing from that list almost always means the Npcap driver service isn't running — not that Tracelucid can't see them. Open Command Prompt <b>as Administrator</b> and run <code>net start npcap</code>, then reopen Live capture. To stop this from recurring, also run <code>sc config npcap start= auto</code> (the space after <code>start=</code> is required). A future release will surface this hint directly in the app.</div>
       </section>
 
       <section id="dashboard">
