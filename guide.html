@@ -173,8 +173,9 @@
       <a href="#dashboard">2. The dashboard</a>
       <a href="#views">3. The detail views</a>
       <a href="#other">4. Other features</a>
-      <a href="#quickref">5. Quick reference</a>
-      <a href="#bytes">6. Understanding bytes</a>
+      <a href="#firewall">5. Firewall Journey</a>
+      <a href="#quickref">6. Quick reference</a>
+      <a href="#bytes">7. Understanding bytes</a>
     </nav>
 
     <div class="content">
@@ -186,10 +187,14 @@
         <table class="ftable">
           <tr><th>Control</th><th>What it does</th><th>When to use it</th></tr>
           <tr><td>Open capture...</td><td>Opens a native file picker for .pcap/.pcapng/.cap files. Select multiple at once — they're merged into one chronological capture using Wireshark's own <code>mergecap</code>, not re-implemented merging logic.</td><td>Standard offline analysis: you already have a capture file (or several) to review.</td></tr>
+          <tr><td>Filter on import...</td><td>Shows fields for addresses, ports and an optional Wireshark display filter. The next capture you open reads only matching packets; a note under the file name shows the filter it was read with.</td><td>Large captures where you already know which machines or service you're investigating: it loads in a fraction of the time.</td></tr>
           <tr><td>Live capture...</td><td>Lists your network interfaces; pick one and click Start. The dashboard updates automatically roughly every 1.5 seconds while it runs. "Stop live capture" ends the session — the result becomes a normal, revisitable capture.</td><td>Watching what's happening on the network right now, rather than reviewing a past file.</td></tr>
+          <tr><td>Compare...</td><td>Opens two captures side by side, "Before" and "After", and shows the health-score change plus which findings were resolved, are new, or are still present. See 4.6.</td><td>Checking whether a fix worked, or what changed between two points in time.</td></tr>
+          <tr><td>Firewall stages...</td><td>Opens Firewall Journey: follow connections through a firewall using the captures it took at different points. See 5.</td><td>Troubleshooting traffic that goes through a firewall: is it forwarded, translated, dropped, or unanswered?</td></tr>
+          <tr><td>Saved captures...</td><td>Lists the investigations you saved with the "Save" button next to a capture's file name, with notes. Open one to see its findings, flows and health score again without re-importing. See 4.7.</td><td>Coming back to an earlier investigation.</td></tr>
           <tr><td>Check engine</td><td>Pings the background analysis engine and confirms it responded, showing its version.</td><td>Troubleshooting only.</td></tr>
-          <tr><td>Appearance</td><td>Theme (Light/Dark/System), accent color, and time format. See 4.3.</td><td>Personal preference, or switching time format to suit the capture (5).</td></tr>
-          <tr><td>Settings</td><td>Optional AI Explanations and Threat Intelligence API keys. Both off until you add your own key. See 4.4.</td><td>Once, when you decide to enable either optional feature.</td></tr>
+          <tr><td>Appearance</td><td>Theme (Light/Dark/System), accent color, and time format. See 4.4.</td><td>Personal preference, or switching time format to suit the capture.</td></tr>
+          <tr><td>Settings</td><td>Optional AI Explanations and Threat Intelligence API keys. Both off until you add your own key. See 4.5.</td><td>Once, when you decide to enable either optional feature.</td></tr>
         </table>
         </div>
         <p>While a file is loading, an import progress bar shows packets processed (and an estimated total, when known), with a Cancel button.</p>
@@ -360,10 +365,72 @@
           <li><b>AI Explanations</b> (Anthropic/Claude): powers "Explain with AI" on findings. Only the specific finding you click is sent — never raw packets.</li>
           <li><b>Threat Intelligence</b> (AbuseIPDB or VirusTotal): powers the reputation lookups. Only checks the exact address you click.</li>
         </ul>
+
+        <h3>4.6 Compare</h3>
+        <p>"Compare..." in the header opens two slots, Before and After. Pick a capture for each and click Compare: you get the health-score change and every finding sorted into <b>Resolved</b>, <b>New</b> and <b>Still present</b>. Each finding says which capture it came from and links to its evidence.</p>
+
+        <h3>4.7 Saved captures</h3>
+        <p>"Save" next to a capture's file name stores its findings, flows, timeline and health score on this computer. "Saved captures..." lists them with editable notes. Opening one shows the analysis immediately; the packets themselves are re-read from the original file, so if that file has moved, everything except packet-level detail is still shown.</p>
+      </section>
+
+      <section id="firewall">
+        <h2>5. Firewall Journey</h2>
+        <p class="intro">For traffic that passes through a firewall. Most firewalls can capture the same traffic at several points (where it arrives, inside the firewall, where it leaves, and what was dropped). Tracelucid matches each packet across those captures, even when NAT changed its addresses, and tells you what happened to every connection.</p>
+
+        <h3>5.1 Running an analysis</h3>
+        <ul class="bullets">
+          <li>Click <b>Firewall stages...</b> in the header and pick your firewall.</li>
+          <li>Click <b>Add capture files...</b> and select the files. The capture point of each file is guessed from its name where possible; check it in the drop-down next to each file.</li>
+          <li>Click <b>Follow traffic through the firewall</b>.</li>
+        </ul>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Firewall</th><th>What to capture</th></tr>
+          <tr><td>Palo Alto Networks</td><td>The packet-capture stages: receive, firewall, transmit, and drop.</td></tr>
+          <tr><td>Check Point (R81 and newer)</td><td>One <code>fw monitor</code> file; the inspection points (i, I, o, O, and the VPN points e, E) are read from the file itself. Files without a capture extension open fine.</td></tr>
+          <tr><td>Cisco ASA / FTD / FMC</td><td>A capture per interface (e.g. inside, outside), plus an <code>asp-drop</code> capture for dropped packets. On FTD, a Snort-engine capture as well if you have one. You can paste the text of <code>show capture</code> for the drop capture to see why each packet was dropped.</td></tr>
+          <tr><td>FortiGate</td><td>GUI packet captures (one per interface), or the text output of <code>diagnose sniffer packet any '&lt;filter&gt;' 6</code> saved to a file.</td></tr>
+          <tr><td>Juniper SRX</td><td>Per-interface packet-capture files (named like <code>cap.ge-0.0.3</code>), or a single datapath-debug file.</td></tr>
+          <tr><td>Sophos / Linux</td><td>A <code>tcpdump -i any</code> capture, or one capture per port.</td></tr>
+          <tr><td>Generic</td><td>Any device: name the capture points yourself and say, for each, whether traffic enters, leaves, or is dropped there.</td></tr>
+        </table>
+        </div>
+        <div class="callout">
+          <p class="callout-label">Capture filters and NAT</p>
+          <p>If the firewall translates addresses, the capture filter must match the traffic <b>at every point</b>, including the translated addresses. A filter that only matches the original addresses hides the translated copies, which then look like drops.</p>
+        </div>
+
+        <h3>5.2 Reading the results</h3>
+        <p>Each connection gets a verdict. Click a verdict chip at the top to show only those connections, and click a connection to see every packet at every point, with the NAT translation between points.</p>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Verdict</th><th>What it means</th></tr>
+          <tr><td>Forwarded</td><td>The firewall passed the traffic in both directions.</td></tr>
+          <tr><td>Dropped</td><td>The packets appear in the firewall's drop capture.</td></tr>
+          <tr><td>Not seen leaving</td><td>The traffic arrived at the firewall but never left it.</td></tr>
+          <tr><td>Partly forwarded</td><td>Some packets got through, others never left the firewall.</td></tr>
+          <tr><td>No reply</td><td>The firewall forwarded the traffic, but the other side never answered: look beyond the firewall.</td></tr>
+          <tr><td>Not seen arriving</td><td>The traffic was only seen after the point where it should have entered, usually because a capture started late or its filter missed it.</td></tr>
+          <tr><td>One point only / Can't tell</td><td>Not enough captures, or the packets couldn't be matched reliably. Tracelucid never guesses between look-alike packets.</td></tr>
+        </table>
+        </div>
+        <p>Findings above the table explain drops and missing replies with vendor-specific next steps. <b>Matching diagnostics</b> shows how reliably packets could be matched; "Copy diagnostics summary" copies counts only, with no addresses or packet contents.</p>
+
+        <h3>5.3 &ldquo;Why can't A reach B?&rdquo;</h3>
+        <p>Before adding files, type a <b>source</b> and <b>destination</b> address (and optionally a port) at the top of the panel. After the analysis, an answer card says in plain language what happened, for example &ldquo;Blocked: the firewall dropped traffic between 10.0.0.27 and 10.30.0.5&rdquo;, and "Show only these connections" narrows the table to them. After an analysis you can change the addresses and click <b>Ask</b> again.</p>
+        <ul class="bullets">
+          <li>With NAT, use the client's real address and either the server's real address or the address the client connects to.</li>
+          <li>Address ranges work too, e.g. <code>10.0.0.0/24</code>.</li>
+          <li>By default only traffic to or from the two addresses is imported, which makes large captures much faster. Untick the box to read everything. The port is not used for filtering, because a firewall that changes ports would hide some copies.</li>
+          <li>Under <b>Advanced</b> you can add your own Wireshark display filter, with the same caution about NAT as above.</li>
+        </ul>
+
+        <h3>5.4 Saving and reports</h3>
+        <p>"Save this analysis" stores the result with notes; "Saved analyses..." lists them. A reopened analysis shows the saved result straight away, and "Re-run with the original files" imports the files again the same way (including any filter) so you can click through to individual packets. "Export PDF..." creates a Firewall Journey report.</p>
       </section>
 
       <section id="quickref">
-        <h2>5. Quick reference: where do I look?</h2>
+        <h2>6. Quick reference: where do I look?</h2>
         <p class="intro">A shortcut for common questions — start here if you're not sure which view has the answer.</p>
         <div class="ftable-wide">
         <table class="qref">
@@ -380,12 +447,14 @@
           <tr><td>Is this specific IP address known to be malicious?</td><td>Reputation lookup in Flows or Hosts (needs a Threat Intelligence key, 4.5).</td></tr>
           <tr><td>I want to inspect the exact bytes of one packet.</td><td>Packet table, expert view (3.5).</td></tr>
           <tr><td>I want to share these results with someone else.</td><td>"Export report..." (4.1).</td></tr>
+          <tr><td>Why can't one machine reach another through a firewall?</td><td>Firewall stages... with the source and destination filled in (5.3).</td></tr>
+          <tr><td>Did my fix work?</td><td>Compare (4.6): Before vs. After.</td></tr>
         </table>
         </div>
       </section>
 
       <section id="bytes">
-        <h2>6. Understanding data volume (bytes)</h2>
+        <h2>7. Understanding data volume (bytes)</h2>
         <p class="intro">Byte counts appear at four different levels of granularity. Each answers a different question — picking the right one matters:</p>
         <ul class="bullets">
           <li><b>Bytes stat tile</b> (2.4) — the whole capture, every host and conversation combined. Answers: "how big was this capture overall?"</li>
