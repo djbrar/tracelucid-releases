@@ -84,3 +84,5 @@ This repository holds only the installers (attached to each [release](https://gi
 ## License
 
 Tracelucid is free to use. Its source code is not public.
+
+The open-source software it includes, and their licenses: [Licenses](https://djbrar.github.io/tracelucid-releases/licenses.html).

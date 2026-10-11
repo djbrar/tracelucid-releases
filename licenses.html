@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tracelucid Licenses</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground: #0a0d12;
+    --surface: #12161d;
+    --surface-raised: #171c25;
+    --border: #232935;
+    --border-soft: #1b212b;
+    --text: #e8ecf2;
+    --text-muted: #8b95a5;
+    --text-dim: #5c6577;
+    --accent: #4a9eff;
+    --accent-soft: rgba(74, 158, 255, 0.12);
+    --good: #3ddc84;
+    --warn: #f5b83d;
+    --critical: #ff5c72;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Consolas, monospace;
+    --sans: "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--ground);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--accent); color: #06090d; }
+  a { color: inherit; }
+  code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    padding: 0.1em 0.4em;
+    color: var(--text);
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+  .nav {
+    display: flex; align-items: center; justify-content: space-between; padding: 28px 0;
+    flex-wrap: wrap; row-gap: 10px;
+  }
+  .nav-mark { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-weight: 600; font-size: 15px; }
+  .nav-mark .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--good); box-shadow: 0 0 8px var(--good); flex-shrink: 0; }
+  .nav-links { display: flex; gap: 28px; font-size: 13.5px; color: var(--text-muted); }
+  .nav-links a { text-decoration: none; }
+  .nav-links a:hover { color: var(--text); }
+
+  .page-head { padding: 20px 0 44px; border-bottom: 1px solid var(--border-soft); }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.14em;
+    color: var(--accent); text-transform: uppercase; margin: 0 0 16px;
+  }
+  h1.title {
+    font-family: var(--mono); font-weight: 700; font-size: clamp(34px, 5vw, 48px);
+    letter-spacing: -0.02em; line-height: 1.05; margin: 0 0 16px; text-wrap: balance;
+  }
+  .lede { font-size: 16px; color: var(--text-muted); max-width: 640px; margin: 0; }
+
+  .layout { display: grid; grid-template-columns: 220px 1fr; gap: 56px; padding: 44px 0 100px; align-items: start; }
+  .toc { position: sticky; top: 28px; display: flex; flex-direction: column; gap: 2px; }
+  .toc-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; margin: 0 0 10px; }
+  .toc a {
+    display: block; font-size: 13px; color: var(--text-muted); text-decoration: none;
+    padding: 6px 0 6px 12px; border-left: 2px solid var(--border-soft);
+  }
+  .toc a:hover { color: var(--text); border-left-color: var(--text-dim); }
+
+  .content section { margin-bottom: 64px; scroll-margin-top: 24px; }
+  .content h2 {
+    font-family: var(--mono); font-size: 24px; font-weight: 600; letter-spacing: -0.01em;
+    margin: 0 0 10px; padding-bottom: 14px; border-bottom: 1px solid var(--border-soft);
+  }
+  .content h3 {
+    font-family: var(--mono); font-size: 15px; font-weight: 600; color: var(--accent);
+    margin: 32px 0 10px; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .content > section > p.intro { color: var(--text-muted); font-size: 14.5px; margin: 14px 0 22px; max-width: 680px; }
+  .content p { font-size: 14px; color: var(--text-muted); margin: 0 0 14px; max-width: 700px; }
+
+  .ftable { width: 100%; border-collapse: collapse; margin: 8px 0 20px; font-size: 13.5px; }
+  .ftable th {
+    text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-dim); font-weight: 500;
+    padding: 0 14px 10px 0; border-bottom: 1px solid var(--border-soft);
+  }
+  .ftable td { padding: 13px 14px 13px 0; border-bottom: 1px solid var(--border-soft); vertical-align: top; color: var(--text-muted); }
+  .ftable td:first-child { color: var(--text); font-weight: 600; white-space: nowrap; font-family: var(--mono); font-size: 12.5px; }
+  .ftable tr:last-child td { border-bottom: none; }
+  .ftable-wide { overflow-x: auto; }
+
+  .callout {
+    background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    border-radius: 8px; padding: 16px 18px; margin: 18px 0; font-size: 13.5px; color: var(--text-muted);
+  }
+  .callout.good { border-left-color: var(--good); }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout b { color: var(--text); }
+  .callout-label {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); display: block; margin-bottom: 6px;
+  }
+  .callout.good .callout-label { color: var(--good); }
+  .callout.warn .callout-label { color: var(--warn); }
+
+  .bullets { margin: 0 0 14px; padding-left: 20px; font-size: 14px; color: var(--text-muted); }
+  .bullets li { margin-bottom: 8px; max-width: 680px; }
+  .bullets b { color: var(--text); }
+
+  .qref { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13.5px; }
+  .qref th {
+    text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #06111f; background: var(--accent); padding: 10px 14px; font-weight: 600;
+  }
+  .qref th:first-child { border-radius: 8px 0 0 0; }
+  .qref th:last-child { border-radius: 0 8px 0 0; }
+  .qref td { padding: 12px 14px; border-bottom: 1px solid var(--border-soft); color: var(--text-muted); }
+  .qref tr:nth-child(even) td { background: var(--surface); }
+  .qref td:first-child { color: var(--text); font-style: italic; width: 42%; }
+
+  .foot-note {
+    font-family: var(--mono); font-size: 12px; color: var(--text-dim); margin-top: 40px;
+    padding-top: 20px; border-top: 1px solid var(--border-soft);
+  }
+
+  footer {
+    padding: 44px 0 56px; border-top: 1px solid var(--border-soft);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+  }
+  .footer-left { font-family: var(--mono); font-size: 12.5px; color: var(--text-dim); }
+  .footer-links { display: flex; gap: 22px; font-size: 13px; color: var(--text-muted); }
+  .footer-links a { text-decoration: none; }
+  .footer-links a:hover { color: var(--text); }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; gap: 24px; }
+    .toc { position: static; flex-direction: row; flex-wrap: wrap; gap: 10px; }
+    .toc a { border-left: none; border-bottom: 2px solid var(--border-soft); padding: 4px 0; }
+    .ftable-wide { overflow-x: auto; }
+    .wrap { padding: 0 20px; }
+  }
+  .content { padding: 44px 0 100px; }
+  .ftable td a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav">
+    <a href="./" style="text-decoration:none"><div class="nav-mark"><span class="dot"></span>tracelucid</div></a>
+    <div class="nav-links">
+      <a href="guide.html">Guide</a>
+      <a href="https://github.com/djbrar/tracelucid-releases/releases/latest">Download</a>
+    </div>
+  </nav>
+
+  <div class="page-head">
+    <p class="eyebrow">Licenses</p>
+    <h1 class="title">Licenses</h1>
+    <p class="lede">What Tracelucid is offered under, and the open-source software it includes.</p>
+  </div>
+
+  <div class="content">
+
+    <section id="tracelucid">
+      <h2>Tracelucid</h2>
+      <p>Tracelucid is free to use. Its source code is not public.</p>
+    </section>
+
+    <section id="not-included">
+      <h2>Not included: Wireshark and Npcap</h2>
+      <p>Tracelucid reads packets with Wireshark's tools (<code>tshark</code>, <code>dumpcap</code>) and, on Windows, Npcap for live capture. They are not part of the Tracelucid installers: you install them yourself, Tracelucid runs them as separate programs, and they keep their own licenses (<a href="https://www.wireshark.org/about.html">Wireshark</a>: GPL-2.0-or-later; <a href="https://npcap.com/#license">Npcap</a>: its own license).</p>
+    </section>
+
+    <section id="third-party">
+      <h2>Third-party software in Tracelucid</h2>
+      <p>The installers include open-source components under their own licenses (MIT, BSD, Apache-2.0, MPL-2.0 and others). Each notices file lists every component in that build with its version and license, followed by the full license texts.</p>
+      <table class="ftable">
+        <tr><th>v0.4.0</th><th>Notices</th></tr>
+        <tr><td>Windows</td><td><a href="licenses/third-party-v0.4.0-windows.txt">Windows notices</a> — 231 components, for the .exe and .msi installers</td></tr>
+        <tr><td>Linux</td><td><a href="licenses/third-party-v0.4.0-linux.txt">Linux notices</a> — 263 components, for the .deb, .rpm and .AppImage installers</td></tr>
+      </table>
+      <p>The lists differ because each operating system's build bundles different libraries: the Python runtime and native libraries in the analysis engine, and the Rust crates in the app.</p>
+      <p>Linux AppImage: the system libraries packed inside it (GTK, WebKitGTK and others) carry their copyright files in <code>usr/share/doc</code> inside the AppImage. Their source code is available from the Debian/Kali source packages of the same name and version.</p>
+      <p>Components under the Mozilla Public License 2.0 are used unmodified; their source code is available from crates.io under the name and version listed.</p>
+      <div class="callout good"><span class="callout-label">From the next release</span>The notices file also ships inside the installers, next to the app.</div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="footer-left">tracelucid licenses</div>
+    <div class="footer-links">
+      <a href="./">Home</a>
+      <a href="guide.html">Guide</a>
+      <a href="https://github.com/djbrar/tracelucid-releases/releases/latest">Download</a>
+    </div>
+  </footer>
+</div>
+</body>
+</html>
