@@ -83,4 +83,4 @@ This repository holds only the installers (attached to each [release](https://gi
 
 ## License
 
-MIT.
+Tracelucid is free to use. Its source code is not public.
