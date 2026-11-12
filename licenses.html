@@ -185,14 +185,17 @@
       <h2>Third-party software in Tracelucid</h2>
       <p>The installers include open-source components under their own licenses (MIT, BSD, Apache-2.0, MPL-2.0 and others). Each notices file lists every component in that build with its version and license, followed by the full license texts.</p>
       <table class="ftable">
-        <tr><th>v0.4.0</th><th>Notices</th></tr>
+        <tr><th>v0.5.0 (latest)</th><th>Notices</th></tr>
+        <tr><td>Windows</td><td><a href="licenses/third-party-v0.5.0-windows.txt">Windows notices</a> — 227 components, for the .exe and .msi installers</td></tr>
+        <tr><td>Linux</td><td><a href="licenses/third-party-v0.5.0-linux.txt">Linux notices</a> — 257 components, for the .deb, .rpm and .AppImage installers</td></tr>
+        <tr><th>v0.4.0</th><th></th></tr>
         <tr><td>Windows</td><td><a href="licenses/third-party-v0.4.0-windows.txt">Windows notices</a> — 231 components, for the .exe and .msi installers</td></tr>
         <tr><td>Linux</td><td><a href="licenses/third-party-v0.4.0-linux.txt">Linux notices</a> — 263 components, for the .deb, .rpm and .AppImage installers</td></tr>
       </table>
       <p>The lists differ because each operating system's build bundles different libraries: the Python runtime and native libraries in the analysis engine, and the Rust crates in the app.</p>
       <p>Linux AppImage: the system libraries packed inside it (GTK, WebKitGTK and others) carry their copyright files in <code>usr/share/doc</code> inside the AppImage. Their source code is available from the Debian/Kali source packages of the same name and version.</p>
       <p>Components under the Mozilla Public License 2.0 are used unmodified; their source code is available from crates.io under the name and version listed.</p>
-      <div class="callout good"><span class="callout-label">From the next release</span>The notices file also ships inside the installers, next to the app.</div>
+      <div class="callout good"><span class="callout-label">Inside the app too</span>From v0.5.0 the same list ships inside the installers as <code>THIRD_PARTY_NOTICES.txt</code>, next to the app.</div>
     </section>
 
   </div>

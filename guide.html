@@ -66,7 +66,7 @@
   }
   .lede { font-size: 16px; color: var(--text-muted); max-width: 640px; margin: 0; }
 
-  .layout { display: grid; grid-template-columns: 220px 1fr; gap: 56px; padding: 44px 0 100px; align-items: start; }
+  .layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 56px; padding: 44px 0 100px; align-items: start; }
   .toc { position: sticky; top: 28px; display: flex; flex-direction: column; gap: 2px; }
   .toc-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; margin: 0 0 10px; }
   .toc a {
@@ -95,6 +95,7 @@
   }
   .ftable td { padding: 13px 14px 13px 0; border-bottom: 1px solid var(--border-soft); vertical-align: top; color: var(--text-muted); }
   .ftable td:first-child { color: var(--text); font-weight: 600; white-space: nowrap; font-family: var(--mono); font-size: 12.5px; }
+  .ftable-names td:first-child { white-space: normal; width: 38%; }
   .ftable tr:last-child td { border-bottom: none; }
   .ftable-wide { overflow-x: auto; }
 
@@ -142,7 +143,7 @@
   .footer-links a:hover { color: var(--text); }
 
   @media (max-width: 860px) {
-    .layout { grid-template-columns: 1fr; gap: 24px; }
+    .layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
     .toc { position: static; flex-direction: row; flex-wrap: wrap; gap: 10px; }
     .toc a { border-left: none; border-bottom: 2px solid var(--border-soft); padding: 4px 0; }
     .ftable-wide { overflow-x: auto; }
@@ -174,8 +175,9 @@
       <a href="#views">3. The detail views</a>
       <a href="#other">4. Other features</a>
       <a href="#firewall">5. Firewall Journey</a>
-      <a href="#quickref">6. Quick reference</a>
-      <a href="#bytes">7. Understanding bytes</a>
+      <a href="#calls">6. Calls (SIP)</a>
+      <a href="#quickref">7. Quick reference</a>
+      <a href="#bytes">8. Understanding bytes</a>
     </nav>
 
     <div class="content">
@@ -186,7 +188,7 @@
         <div class="ftable-wide">
         <table class="ftable">
           <tr><th>Control</th><th>What it does</th><th>When to use it</th></tr>
-          <tr><td>Open capture...</td><td>Opens a native file picker for .pcap/.pcapng/.cap files. Select multiple at once — they're merged into one chronological capture using Wireshark's own <code>mergecap</code>, not re-implemented merging logic.</td><td>Standard offline analysis: you already have a capture file (or several) to review.</td></tr>
+          <tr><td>Open capture...</td><td>Opens a native file picker for .pcap/.pcapng/.cap files, also compressed (.gz, .zst, .lz4). Select multiple at once — they're merged into one chronological capture using Wireshark's own <code>mergecap</code>, not re-implemented merging logic.</td><td>Standard offline analysis: you already have a capture file (or several) to review.</td></tr>
           <tr><td>Filter on import...</td><td>Shows fields for addresses, ports and an optional Wireshark display filter. The next capture you open reads only matching packets; a note under the file name shows the filter it was read with.</td><td>Large captures where you already know which machines or service you're investigating: it loads in a fraction of the time.</td></tr>
           <tr><td>Live capture...</td><td>Lists your network interfaces; pick one and click Start. The dashboard updates automatically roughly every 1.5 seconds while it runs. "Stop live capture" ends the session — the result becomes a normal, revisitable capture.</td><td>Watching what's happening on the network right now, rather than reviewing a past file.</td></tr>
           <tr><td>Compare...</td><td>Opens two captures side by side, "Before" and "After", and shows the health-score change plus which findings were resolved, are new, or are still present. See 4.6.</td><td>Checking whether a fix worked, or what changed between two points in time.</td></tr>
@@ -341,7 +343,7 @@
         <h2>4. Other features</h2>
 
         <h3>4.1 Export report</h3>
-        <p>The "Export report..." button sits next to the capture's file name, above the dashboard. Opens a checklist — Network health, Findings, Flows, Hosts, Conversations, Timeline — pick any combination, then "Export to PDF..." opens a native save dialog.</p>
+        <p>The "Export report..." button sits next to the capture's file name, above the dashboard. Opens a checklist — Network health, Findings, Calls, Flows, Hosts, Conversations, Timeline — pick any combination, then "Export to PDF..." opens a native save dialog.</p>
 
         <h3>4.2 Follow stream</h3>
         <p>Click any row in Flows to reassemble that conversation's payload into a readable, direction-colored exchange — the same mechanism behind Wireshark's "Follow TCP Stream." HTTP-aware mode dechunks <code>Transfer-Encoding: chunked</code> bodies automatically; a Text/Hex toggle handles binary or encrypted content; and clicking any reassembled chunk jumps straight to the exact packet that carried it.</p>
@@ -429,8 +431,70 @@
         <p>"Save this analysis" stores the result with notes; "Saved analyses..." lists them. A reopened analysis shows the saved result straight away, and "Re-run with the original files" imports the files again the same way (including any filter) so you can click through to individual packets. "Export PDF..." creates a Firewall Journey report.</p>
       </section>
 
+      <section id="calls">
+        <h2>6. Calls (SIP)</h2>
+        <p class="intro">When a capture holds SIP signalling or RTP audio, a <b>Calls</b> panel appears on the dashboard. Every call becomes one row with its outcome in plain words, and every conclusion links back to the SIP messages that prove it. It works on any capture that contains SIP &mdash; there's no separate VoIP mode.</p>
+
+        <h3>6.1 The call list</h3>
+        <p>A line above the table counts the calls by outcome, for example &ldquo;12 calls: 8 answered, 2 busy, 1 number not found, 1 no response&rdquo;.</p>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Field</th><th>What it means</th><th>When to use it</th></tr>
+          <tr><td>Started</td><td>When the first INVITE was sent; format follows Appearance &rarr; Time format.</td><td>Matching a call to a user's complaint (&ldquo;my call at 10:42 failed&rdquo;).</td></tr>
+          <tr><td>From &rarr; to</td><td>The calling and called number or user name, in full, with the two IP addresses underneath.</td><td>Finding one specific call.</td></tr>
+          <tr><td>Outcome</td><td>Answered, busy, declined, cancelled by the caller, still ringing when the capture ended, no response, timed out, number not found, rejected, unavailable, no common codec, failed, or dropped (answer never acknowledged). For a failed call, the line underneath gives the SIP status (e.g. &ldquo;404 Not Found&rdquo;) and, when the other side sent one, the Q.850 cause in words.</td><td>The first column to read: why did this call end the way it did?</td></tr>
+          <tr><td>Ringing after</td><td>Time from the INVITE to the first ringing (180/183) &mdash; the post-dial delay the caller hears as silence.</td><td>&ldquo;Calls take ages to start ringing.&rdquo;</td></tr>
+          <tr><td>Duration</td><td>From the answer (200 OK) to the hang-up (BYE).</td><td>Spotting calls that all end after the same time &mdash; a sign of a drop, not of people hanging up.</td></tr>
+          <tr><td>Hung up</td><td>Which side sent the BYE.</td><td>&ldquo;The call cut off&rdquo; vs. the other person hung up.</td></tr>
+          <tr><td>Audio</td><td>For answered calls: the quality score and rating of the worse direction, &ldquo;one-way (only from &hellip;)&rdquo;, or &ldquo;none seen&rdquo;. Audio is matched to the address and port each side announced in its SDP.</td><td>&ldquo;I couldn't hear them&rdquo; &mdash; one-way audio is usually NAT or a firewall.</td></tr>
+          <tr><td>Ladder / Packets</td><td><b>Ladder</b> opens the call diagram (6.2). <b>Packets</b> shows the call's SIP messages and first audio packets in the packet table, each one labelled.</td><td>Checking the outcome against the raw messages.</td></tr>
+        </table>
+        </div>
+
+        <h3>6.2 The call ladder</h3>
+        <p>The classic SIP diagram: one column per host, one arrow per message in time order, with the time of each. Resent messages are marked, failure responses are highlighted, and a row after the answer shows how many audio packets flowed each way. <b>Click any arrow</b> to open that packet in the packet table with its full decode.</p>
+        <div class="callout"><span class="callout-label">When to use this view</span>Explaining a failure to someone else, or seeing where a call went wrong: an INVITE resent with no answer, a 200 OK resent because the ACK never arrived, or a BYE from an unexpected side.</div>
+
+        <h3>6.3 Registrations and audio quality</h3>
+        <div class="ftable-wide">
+        <table class="ftable">
+          <tr><th>Table</th><th>What it shows</th><th>When to use it</th></tr>
+          <tr><td>Registrations</td><td>Each attempt by a phone to register: when, the account, the registrar, and the result. A 401/407 challenge followed by a successful retry is the normal sign-in and counts as registered.</td><td>A phone that can't make or receive any calls at all.</td></tr>
+          <tr><td>Audio quality</td><td>Each RTP audio stream: direction, codec, packets lost, jitter, and an estimated quality score (MOS) with a rating.</td><td>&ldquo;The call was choppy&rdquo; &mdash; loss and jitter tell you whether the network is to blame.</td></tr>
+        </table>
+        </div>
+
+        <h3>6.4 Call findings</h3>
+        <p>Call problems also appear as findings on the dashboard (2.2), each with &ldquo;View evidence&rdquo; pointing at the exact SIP messages:</p>
+        <div class="ftable-wide">
+        <table class="ftable ftable-names">
+          <tr><th>Finding</th><th>What it means</th></tr>
+          <tr><td>SIP call failed</td><td>A call ended with an error response. Says which status and cause, in plain words.</td></tr>
+          <tr><td>SIP INVITE never answered</td><td>The INVITE was resent with no response at all: it isn't reaching the other side, or the replies aren't coming back (firewall, routing, SIP ALG).</td></tr>
+          <tr><td>SIP call dropped: answer never acknowledged</td><td>The called side kept resending its 200 OK because no ACK arrived, then gave up &mdash; the classic call that drops after about 32 seconds. Usually the ACK is lost or sent to the wrong address (NAT).</td></tr>
+          <tr><td>One-way audio / No audio in a call</td><td>Audio was negotiated but flowed in only one direction, or not at all. &ldquo;No audio&rdquo; is only reported when other calls in the same capture do have audio, so a signalling-only capture doesn't raise false alarms.</td></tr>
+          <tr><td>Private address offered for audio</td><td>A phone told the other side to send audio to a private address (e.g. 192.168.x.x) while signalling from a public one. The far end can't reach it: a NAT or SIP ALG problem.</td></tr>
+          <tr><td>Slow call setup</td><td>Four seconds or more from the INVITE to the first ringing.</td></tr>
+          <tr><td>SIP registration failed</td><td>A phone's registration was refused or never answered.</td></tr>
+          <tr><td>SIP signalling is encrypted</td><td>Information only: SIP over TLS (port 5061) can't be read, so its calls aren't analysed; audio quality still can be if the RTP is visible.</td></tr>
+        </table>
+        </div>
+        <p>Network health (2.1) gets a <b>Call failures</b> factor. It counts calls that failed for a technical reason (no response, timed out, number not found, rejected, unavailable, no common codec, dropped&hellip;). Busy, declined and cancelled calls are normal and don't count.</p>
+
+        <h3>6.5 Search, &ldquo;Why can't A reach B?&rdquo; and reports</h3>
+        <ul class="bullets">
+          <li><b>Plain-words search</b> understands calls: try <code>failed calls</code>, <code>calls to 1001</code>, or <code>busy</code>.</li>
+          <li><b>&ldquo;Why can't A reach B?&rdquo;</b> gives SIP answers when the two addresses exchanged SIP: the INVITE was never answered, the call was rejected (with the status), or it dropped because the answer was never acknowledged.</li>
+          <li><b>Export report</b> (4.1) has a <b>Calls</b> section listing every call with its outcome.</li>
+        </ul>
+        <div class="callout">
+          <p class="callout-label">What to capture</p>
+          <p>A packet capture (.pcap/.pcapng) taken on the phone, the PBX or the SBC, or from a mirror port, with both SIP (usually UDP/TCP 5060) and the RTP audio ports. Text logs exported from a PBX or SBC aren't packet captures and can't be opened; Tracelucid says so when you try. Phone numbers are shown in full, in the app and in reports only &mdash; nothing is sent anywhere unless you ask for an AI explanation of a finding.</p>
+        </div>
+      </section>
+
       <section id="quickref">
-        <h2>6. Quick reference: where do I look?</h2>
+        <h2>7. Quick reference: where do I look?</h2>
         <p class="intro">A shortcut for common questions — start here if you're not sure which view has the answer.</p>
         <div class="ftable-wide">
         <table class="qref">
@@ -449,12 +513,14 @@
           <tr><td>I want to share these results with someone else.</td><td>"Export report..." (4.1).</td></tr>
           <tr><td>Why can't one machine reach another through a firewall?</td><td>Firewall stages... with the source and destination filled in (5.3).</td></tr>
           <tr><td>Did my fix work?</td><td>Compare (4.6): Before vs. After.</td></tr>
+          <tr><td>Why did a phone call fail, or drop?</td><td>Calls (6.1): the Outcome column, then Ladder (6.2) to see the messages.</td></tr>
+          <tr><td>Why could only one side hear the other?</td><td>Calls (6.1): the Audio column; the findings &ldquo;One-way audio&rdquo; and &ldquo;Private address offered for audio&rdquo; (6.4).</td></tr>
         </table>
         </div>
       </section>
 
       <section id="bytes">
-        <h2>7. Understanding data volume (bytes)</h2>
+        <h2>8. Understanding data volume (bytes)</h2>
         <p class="intro">Byte counts appear at four different levels of granularity. Each answers a different question — picking the right one matters:</p>
         <ul class="bullets">
           <li><b>Bytes stat tile</b> (2.4) — the whole capture, every host and conversation combined. Answers: "how big was this capture overall?"</li>

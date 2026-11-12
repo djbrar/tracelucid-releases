@@ -23,12 +23,13 @@ Tracelucid is a desktop network traffic analyzer for Windows and Linux. Open a c
   - poor VoIP/video call quality, per direction
   - logins sent unencrypted (the password is never repeated in the finding)
   - security signals: port scans, beacon-like timing, large outbound transfers, suspicious DNS names
+- **Phone calls (SIP).** Every call with its outcome in plain words (answered, busy, number not found, never answered, dropped), how long it rang and lasted, and who hung up. A call ladder of the SIP messages, failed registrations, one-way or missing audio, and private addresses offered for audio (NAT).
 - **"Why can't A reach B?"** Type two addresses or names and get the most telling answer: blocked by a firewall, refused, no answer, TLS failed, an HTTP error, slow, or reached.
 - **Follow traffic through a firewall.** Open the captures a firewall took at different points (Palo Alto, Check Point, Cisco ASA/FTD, FortiGate, Juniper SRX, Sophos, or any device) and Tracelucid recognises them. It then shows what happened to each connection: forwarded, translated by NAT, dropped, or never answered.
 - **A packet detail pane that explains.** What the packet does in plain words, Wireshark's full decoded tree with links to related packets, and the raw bytes with the selected field highlighted.
 - **Where the time went.** For a slow connection: DNS, connect, TLS, waiting for the server, download, with a one-line verdict.
 - **More views:** traffic over time, a network map of who talks to whom, names next to IP addresses (taken from the capture), call quality, Follow Stream (a whole conversation as readable text), and search in plain words ("failed dns", "resets to shop.example").
-- **Open, capture, compare, save.** Open one or several PCAP/PCAPNG files (merged into one timeline), filter on import for large files, capture live from a network interface, compare a "before" and "after" capture, and save investigations with notes.
+- **Open, capture, compare, save.** Open one or several PCAP/PCAPNG files, compressed or not (merged into one timeline), filter on import for large files, capture live from a network interface, compare a "before" and "after" capture, and save investigations with notes.
 - **PDF reports**, with the sections you choose.
 
 ## Privacy
